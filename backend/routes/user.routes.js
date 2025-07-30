@@ -1,26 +1,39 @@
-import { Router } from "express";
+import { Router } from 'express';
 import { body } from 'express-validator';
-import * as userController from '../controllers/user.controller.js';
-import * as authMiddleware from '../middlewares/auth.middleware.js'; // Assuming you have an auth middleware for protected routes
+import {
+  createUserController,
+  loginUserController,
+  profileController,
+  logoutController
+} from '../controllers/user.controller.js';
+
+import {authUser} from '../middlewares/auth.middleware.js'
 
 const router = Router();
 
-
-router.post('/register',
+router.post(
+  '/register',
+  [
+    body('name').trim().isLength({ min: 2, max: 50 }).withMessage('Name must be between 2 and 50 characters'),
     body('email').isEmail().withMessage('Invalid email address'),
-    body('password').isLength({ min: 3, max: 10 }).withMessage('Password must be between 3 and 10 characters'),
-    userController.createUsercontroller
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+    body('mobile').matches(/^\+?\d{10,15}$/).withMessage('Invalid mobile number'),
+    body('age').isInt({ min: 13, max: 120 }).withMessage('Age must be between 13 and 120'),
+    body('type').isIn(['consumer', 'seller']).withMessage('Type must be consumer or seller'),
+  ],
+  createUserController
 );
 
-router.post('/login',
+router.post(
+  '/login',
+  [
     body('email').isEmail().withMessage('Invalid email address'),
-    body('password').isLength({ min: 3, max: 10 }).withMessage('Password must be between 3 and 10 characters'),
-    userController.loginUserController
+    body('password').notEmpty().withMessage('Password is required'),
+  ],
+  loginUserController
 );
 
-router.get('/profile', authMiddleware.authUser, userController.profileController); // Assuming you have a method to get user profile
+router.get('/profile', authUser, profileController);
+router.post('/logout', authUser, logoutController);
 
-router.get('/logout', authMiddleware.authUser, userController.logoutController); // Assuming you have a method to handle logout 
-
-
-export default router;
+export default router

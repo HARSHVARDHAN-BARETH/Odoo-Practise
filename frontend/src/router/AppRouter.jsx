@@ -8,13 +8,16 @@ import HelpSupport from "../components/HelpSupport";
 import ProductForm from "../components/ProductForm";
 import TermsConditions from "../components/TermsConditions";
 import ReactMemo from "../components/ReactMemo";
+import LandingPage from "../components/LandingPage";
+import Welcome from "../components/Welcome";
 
 const AppRouter = () => {
     return (
         <div className="bg-gray-900 min-h-screen">
             <BrowserRouter>
                 <Routes>
-                    <Route path='/' element={<Dashboard />} />
+                    <Route path='/' element={<Welcome />} />
+                    <Route path='/landing' element={<LandingPage />} />
                     <Route path='/dashboard' element={<Dashboard />} />
                     <Route path='/login' element={<Login />} />
                     <Route path='/register' element={<Register />} />
